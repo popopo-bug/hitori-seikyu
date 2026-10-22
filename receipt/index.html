@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ja" data-base="../">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>領収書作成ツール【無料・登録不要】収入印紙の要否も自動判定｜ひとり請求書</title>
+<meta name="description" content="領収書を無料・登録不要で作成してPDF保存。インボイス対応で、5万円以上なら必要な収入印紙の金額を自動表示。PDFやメールで送る領収書は印紙不要です。">
+<link rel="canonical" href="https://popopo-bug.github.io/hitori-seikyu/receipt/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ひとり請求書">
+<meta property="og:title" content="領収書作成ツール【無料・登録不要】収入印紙の要否も自動判定｜ひとり請求書">
+<meta property="og:description" content="領収書を無料・登録不要で作成してPDF保存。インボイス対応で、5万円以上なら必要な収入印紙の金額を自動表示。PDFやメールで送る領収書は印紙不要です。">
+<meta property="og:url" content="https://popopo-bug.github.io/hitori-seikyu/receipt/">
+<meta property="og:image" content="https://popopo-bug.github.io/hitori-seikyu/og/default.png">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#1f4ea3">
+<meta name="format-detection" content="telephone=no">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../icons/icon-48.png" sizes="48x48" type="image/png">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="stylesheet" href="../assets/style.css?v=81142e09da">
+
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"ひとり請求書（領収書作成ツール）","url":"https://popopo-bug.github.io/hitori-seikyu/receipt/","applicationCategory":"BusinessApplication","operatingSystem":"Web","inLanguage":"ja","offers":{"@type":"Offer","price":"0","priceCurrency":"JPY"},"description":"領収書を無料・登録不要で作成してPDF保存。インボイス対応で、5万円以上なら必要な収入印紙の金額を自動表示。PDFやメールで送る領収書は印紙不要です。"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://popopo-bug.github.io/hitori-seikyu/"},{"@type":"ListItem","position":2,"name":"領収書","item":"https://popopo-bug.github.io/hitori-seikyu/receipt/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"領収書に収入印紙は必要ですか？","acceptedAnswer":{"@type":"Answer","text":"紙の領収書で、受取金額（消費税額を分けて書いた場合は税抜金額）が5万円以上なら必要です。5万円以上100万円以下は200円です。PDFをメール等で送る場合は課税文書の作成に当たらないため、印紙は不要です。"}},{"@type":"Question","name":"宛名は「上様」でも大丈夫ですか？","acceptedAnswer":{"@type":"Answer","text":"インボイスとしての領収書（適格簡易請求書）で宛名を省略できるのは、小売業・飲食店業・タクシー業など不特定多数を相手にする事業に限られます。それ以外は、受け取る事業者の名称を書いてください。"}},{"@type":"Question","name":"但し書きは何と書けばいいですか？","acceptedAnswer":{"@type":"Answer","text":"「お品代として」ではなく、「Webサイト制作費として」「書籍代として」など具体的に書くのが望ましいです。経費の内容が分かりやすくなります。"}},{"@type":"Question","name":"源泉徴収された報酬の領収書は？","acceptedAnswer":{"@type":"Answer","text":"「源泉徴収をする」をオンにすると、税込合計から源泉徴収税額を差し引いた実際の受取額で領収書を作成し、内訳に源泉徴収税額を表示します。"}}]}]}</script>
+</head>
+<body data-page="receipt">
+<a class="skip" href="#main">本文へスキップ</a>
+<header class="site-header">
+  <div class="wrap wrap-wide hd">
+    <a class="brand" href="../"><img src="../favicon.svg" alt="" width="28" height="28"><span>ひとり請求書</span></a>
+    <button type="button" class="btn btn-ghost btn-sm nav-toggle" aria-expanded="false" aria-controls="site-nav">メニュー</button>
+    <nav id="site-nav" class="nav" aria-label="メインメニュー">
+      <a href="../">請求書</a>
+      <a href="../estimate/">見積書</a>
+      <a href="../delivery/">納品書</a>
+      <a href="../receipt/" aria-current="page">領収書</a>
+      <a href="../tools/shohizei/">3割特例 計算</a>
+      <a href="../tools/gensen/">源泉徴収 計算</a>
+      <a href="../guide/">解説</a>
+      <a class="nav-pro" href="../pro/">Pro版</a>
+    </nav>
+  </div>
+</header>
+<main id="main">
+<section class="wrap wrap-wide hero-mini">
+  <h1>領収書作成ツール<small style="font-size:.6em;font-weight:700;color:var(--text-2)">（無料・登録不要）</small></h1>
+  <p class="lead">金額・但し書き・宛名を入れるだけ。インボイスに必要な税率ごとの内訳も自動で入り、収入印紙が必要かどうかもその場でわかります。</p>
+  <ul class="pills"><li>登録・ログイン不要</li><li>インボイス対応</li><li>収入印紙を自動判定</li><li>データは端末内だけ</li></ul>
+</section>
+<div class="wrap wrap-wide"><div data-app="editor" data-type="receipt"></div></div>
+<div class="wrap"><div class="ad-slot" data-slot="content"></div></div>
+
+<article class="wrap wrap-narrow prose">
+  <h2>領収書の収入印紙（早見表）</h2>
+  <p>売上代金の領収書（第17号の1文書）は、記載された受取金額に応じて印紙税がかかります。消費税額が区分して書かれていれば、<b>税抜金額で判定</b>します。</p>
+  <table>
+    <thead><tr><th>受取金額</th><th class="num">印紙税額</th></tr></thead>
+    <tbody>
+      <tr><td>5万円未満</td><td class="num">非課税</td></tr>
+      <tr><td>100万円以下</td><td class="num">200円</td></tr>
+      <tr><td>100万円超 200万円以下</td><td class="num">400円</td></tr>
+      <tr><td>200万円超 300万円以下</td><td class="num">600円</td></tr>
+      <tr><td>300万円超 500万円以下</td><td class="num">1,000円</td></tr>
+      <tr><td>500万円超 1,000万円以下</td><td class="num">2,000円</td></tr>
+      <tr><td>1,000万円超 2,000万円以下</td><td class="num">4,000円</td></tr>
+    </tbody>
+  </table>
+  <p>それ以上の金額や、営業に関しない受取書（医師・弁護士などの業務、個人が私物を売った場合など）の扱いは、国税庁の<a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/inshi/7105.htm" target="_blank" rel="noopener">タックスアンサー No.7105</a>で確認できます。金額だけ確かめたいときは<a href="../tools/inshi/">収入印紙 判定ツール</a>をどうぞ。</p>
+  <div class="box box-ok">
+    <div class="box-h">PDFで送る領収書は印紙不要</div>
+    <p>印紙税は「紙の文書を作成したとき」にかかる税金です。PDFをメールやチャットで送るだけなら印紙は要りません。紙で手渡す・郵送する場合だけ「紙で手渡し・郵送する」をオンにすると、印紙を貼る枠が表示されます。</p>
+  </div>
+  <h2>インボイスとしての領収書</h2>
+  <p>登録番号を入れると、領収書をインボイス（適格請求書）として交付できます。税率ごとの税抜金額と消費税額は内訳に自動で表示されます。</p>
+  <section class="faq"><h2 id="faq">よくある質問</h2><details><summary>領収書に収入印紙は必要ですか？</summary><div class="a"><p>紙の領収書で、受取金額（消費税額を分けて書いた場合は税抜金額）が5万円以上なら必要です。5万円以上100万円以下は200円です。PDFをメール等で送る場合は課税文書の作成に当たらないため、印紙は不要です。</p></div></details><details><summary>宛名は「上様」でも大丈夫ですか？</summary><div class="a"><p>インボイスとしての領収書（適格簡易請求書）で宛名を省略できるのは、小売業・飲食店業・タクシー業など不特定多数を相手にする事業に限られます。それ以外は、受け取る事業者の名称を書いてください。</p></div></details><details><summary>但し書きは何と書けばいいですか？</summary><div class="a"><p>「お品代として」ではなく、「Webサイト制作費として」「書籍代として」など具体的に書くのが望ましいです。経費の内容が分かりやすくなります。</p></div></details><details><summary>源泉徴収された報酬の領収書は？</summary><div class="a"><p>「源泉徴収をする」をオンにすると、税込合計から源泉徴収税額を差し引いた実際の受取額で領収書を作成し、内訳に源泉徴収税額を表示します。</p></div></details></section>
+</article>
+
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <a class="brand" href="../"><img src="../favicon.svg" alt="" width="24" height="24"><span>ひとり請求書</span></a>
+    <div class="ft-cols">
+      <div><h4>書類をつくる（無料）</h4><ul>
+        <li><a href="../">請求書</a></li>
+        <li><a href="../estimate/">見積書</a></li>
+        <li><a href="../delivery/">納品書</a></li>
+        <li><a href="../receipt/">領収書</a></li>
+      </ul></div>
+      <div><h4>計算ツール</h4><ul>
+        <li><a href="../tools/shohizei/">消費税 3割特例シミュレーター</a></li>
+        <li><a href="../tools/gensen/">源泉徴収 計算</a></li>
+        <li><a href="../tools/inshi/">領収書の収入印紙 判定</a></li>
+      </ul></div>
+      <div><h4>解説</h4><ul>
+        <li><a href="../guide/invoice/">インボイス対応の請求書の書き方</a></li>
+        <li><a href="../guide/3wari-tokurei/">3割特例とは（2027〜2028年）</a></li>
+        <li><a href="../guide/denchoho/">請求書PDFの保存と電子帳簿保存法</a></li>
+        <li><a href="../guide/documents/">見積書・納品書・請求書・領収書の違い</a></li>
+      </ul></div>
+      <div><h4>このサイトについて</h4><ul>
+        <li><a href="../pro/">Pro版（買い切り・オフライン）</a></li>
+        <li><a href="../about/">運営者情報・お問い合わせ</a></li>
+        <li><a href="../privacy/">プライバシーポリシー</a></li>
+      </ul></div>
+    </div>
+    <p class="ft-note">入力した内容は、お使いのブラウザの中（端末内）にだけ保存され、当サイトのサーバーへ送信されることはありません。計算結果や解説は一般的な情報です。個別の税務判断は税理士・税務署にご確認ください。当サイトはアフィリエイトプログラム等による広告を掲載することがあります（該当箇所に「PR」と表示）。</p>
+    <p class="ft-copy">© 2026 ひとり請求書</p>
+  </div>
+</footer>
+<script>window.HS_CONFIG = {"siteName":"ひとり請求書","proUrl":"","trialUrl":"","proPrice":"1,480円（発売記念 980円）","adsenseClient":"","adsenseSlots":{"content":"","footer":""},"affiliates":{"accounting":[{"name":"freee会計","desc":"請求書の入金管理から確定申告・消費税申告まで。スマホでも操作しやすい。","url":"https://www.freee.co.jp/","affiliate":false,"cta":"公式サイトを見る"},{"name":"マネーフォワード クラウド確定申告","desc":"銀行・カード連携で帳簿づけを自動化。消費税の申告書作成にも対応。","url":"https://biz.moneyforward.com/tax_return/","affiliate":false,"cta":"公式サイトを見る"},{"name":"弥生 やよいの青色申告 オンライン","desc":"老舗会計ソフトのクラウド版。初年度無料のプランあり（公式サイトで要確認）。","url":"https://www.yayoi-kk.co.jp/","affiliate":false,"cta":"公式サイトを見る"}],"advisor":[{"name":"税理士ドットコム","desc":"消費税の申告方法（3割特例・簡易課税・本則）の判断を税理士に相談できます。","url":"https://www.zeiri4.com/","affiliate":false,"cta":"税理士を探す"}]},"contactUrl":""};</script>
+<script src="../assets/app.js?v=81142e09da" defer></script>
+</body>
+</html>

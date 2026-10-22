@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ja" data-base="../../">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>消費税 3割特例シミュレーター【2027年・2028年】2割特例終了後の納税額を計算｜ひとり請求書</title>
+<meta name="description" content="インボイス登録した個人事業者向け。2割特例が2026年分で終わったあと、3割特例・簡易課税・本則課税のどれがいちばん安いかを売上と経費から計算。2029年以降の納税額の推移もグラフで表示します。">
+<link rel="canonical" href="https://popopo-bug.github.io/hitori-seikyu/tools/shohizei/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ひとり請求書">
+<meta property="og:title" content="消費税 3割特例シミュレーター【2027年・2028年】2割特例終了後の納税額を計算｜ひとり請求書">
+<meta property="og:description" content="インボイス登録した個人事業者向け。2割特例が2026年分で終わったあと、3割特例・簡易課税・本則課税のどれがいちばん安いかを売上と経費から計算。2029年以降の納税額の推移もグラフで表示します。">
+<meta property="og:url" content="https://popopo-bug.github.io/hitori-seikyu/tools/shohizei/">
+<meta property="og:image" content="https://popopo-bug.github.io/hitori-seikyu/og/shohizei.png">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#1f4ea3">
+<meta name="format-detection" content="telephone=no">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../../icons/icon-48.png" sizes="48x48" type="image/png">
+<link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png">
+<link rel="manifest" href="../../manifest.webmanifest">
+<link rel="stylesheet" href="../../assets/style.css?v=81142e09da">
+
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"消費税 3割特例シミュレーター","url":"https://popopo-bug.github.io/hitori-seikyu/tools/shohizei/","applicationCategory":"BusinessApplication","operatingSystem":"Web","inLanguage":"ja","offers":{"@type":"Offer","price":"0","priceCurrency":"JPY"},"description":"インボイス登録した個人事業者向け。2割特例が2026年分で終わったあと、3割特例・簡易課税・本則課税のどれがいちばん安いかを売上と経費から計算。2029年以降の納税額の推移もグラフで表示します。"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://popopo-bug.github.io/hitori-seikyu/"},{"@type":"ListItem","position":2,"name":"3割特例シミュレーター","item":"https://popopo-bug.github.io/hitori-seikyu/tools/shohizei/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"3割特例は誰が使えますか？","acceptedAnswer":{"@type":"Answer","text":"免税事業者がインボイス発行事業者の登録をしたこと（または課税事業者選択届出書の提出）により課税事業者になった個人事業者が、令和9年（2027年）分と令和10年（2028年）分の申告で使えます。2年前の課税売上高が1,000万円を超える年は使えません。法人は対象外です。"}},{"@type":"Question","name":"3割特例を使うのに届出は必要ですか？","acceptedAnswer":{"@type":"Answer","text":"事前の届出は不要です。確定申告書に3割特例の適用を受ける旨を付記すれば使えます。年ごとに選べます。"}},{"@type":"Question","name":"3割特例と簡易課税はどちらが得ですか？","acceptedAnswer":{"@type":"Answer","text":"簡易課税のみなし仕入率が70%より高い業種（卸売業90%・小売業80%）は簡易課税、それ以外（製造業等70%・飲食店等60%・サービス業50%・不動産業40%）は多くの場合3割特例のほうが有利です。経費の多い年は本則課税が有利なこともあります。このツールで3つを並べて比べられます。"}},{"@type":"Question","name":"3割特例のあと、簡易課税に切り替えるには？","acceptedAnswer":{"@type":"Answer","text":"令和8年度の改正で、2割特例や3割特例を使った年の翌年分の確定申告期限までに「簡易課税制度選択届出書」を出せば、その翌年分から簡易課税を使えるようになりました。例えば令和10年分を3割特例で申告した場合、令和11年分の申告期限（令和12年4月1日）までの提出で令和11年分から簡易課税を適用できます。"}},{"@type":"Question","name":"計算結果は正確ですか？","acceptedAnswer":{"@type":"Answer","text":"課税標準額の千円未満と納付税額の百円未満の切り捨てを反映した概算です。中間申告、売上の返品・値引き、貸倒れ、複数の事業区分などは考慮していません。実際の申告は税務署や税理士にご確認ください。"}}]}]}</script>
+</head>
+<body data-page="tools-shohizei">
+<a class="skip" href="#main">本文へスキップ</a>
+<header class="site-header">
+  <div class="wrap wrap-wide hd">
+    <a class="brand" href="../../"><img src="../../favicon.svg" alt="" width="28" height="28"><span>ひとり請求書</span></a>
+    <button type="button" class="btn btn-ghost btn-sm nav-toggle" aria-expanded="false" aria-controls="site-nav">メニュー</button>
+    <nav id="site-nav" class="nav" aria-label="メインメニュー">
+      <a href="../../">請求書</a>
+      <a href="../../estimate/">見積書</a>
+      <a href="../../delivery/">納品書</a>
+      <a href="../../receipt/">領収書</a>
+      <a href="../../tools/shohizei/" aria-current="page">3割特例 計算</a>
+      <a href="../../tools/gensen/">源泉徴収 計算</a>
+      <a href="../../guide/">解説</a>
+      <a class="nav-pro" href="../../pro/">Pro版</a>
+    </nav>
+  </div>
+</header>
+<main id="main">
+<section class="wrap hero-mini">
+  <nav class="crumbs" aria-label="パンくずリスト"><a href="../../">ホーム</a><span>›</span><span aria-current="page">3割特例シミュレーター</span></nav>
+  <h1>消費税 3割特例シミュレーター<small style="font-size:.6em;font-weight:700;color:var(--text-2)">（2027・2028年分）</small></h1>
+  <p class="lead">インボイス登録をした個人事業者の「2割特例」は<b>2026年分で終了</b>。2027年・2028年分は「3割特例」、2029年分からは簡易課税か本則課税になります。売上と経費を入れると、それぞれの納税額と、いちばん有利な方法がわかります。</p>
+</section>
+<div class="wrap"><div data-app="ctax"></div></div>
+<div class="wrap"><div class="ad-slot" data-slot="content"></div></div>
+
+<article class="wrap wrap-narrow prose">
+  <h2>2026年10月からの制度変更のポイント</h2>
+  <p>令和8年度の税制改正で、インボイス制度の負担軽減措置が次のように見直されました（国税庁の資料より）。</p>
+  <table>
+    <thead><tr><th>年分（個人事業者）</th><th>使える特例</th><th>納付税額の目安</th></tr></thead>
+    <tbody>
+      <tr><td>2026年（令和8年）分まで</td><td>2割特例</td><td>売上税額の2割</td></tr>
+      <tr><td>2027年（令和9年）分</td><td>3割特例</td><td>売上税額の3割</td></tr>
+      <tr><td>2028年（令和10年）分</td><td>3割特例</td><td>売上税額の3割</td></tr>
+      <tr><td>2029年（令和11年）分〜</td><td>なし</td><td>簡易課税または本則課税</td></tr>
+    </tbody>
+  </table>
+  <p>たとえばサービス業で税抜売上が600万円なら、消費税（国税＋地方）は2割特例で約12万円、3割特例で約18万円、簡易課税（第5種）で約30万円です。2年で負担は2.5倍になる計算で、早めの資金準備が欠かせません。</p>
+
+  <h3>インボイスのない仕入れの控除割合も変わります</h3>
+  <p>本則課税で計算する場合、免税事業者などインボイスを発行できない相手からの仕入れは、経過措置で一部だけ控除できます。この割合は<b>2026年10月から70%</b>（改正前の予定は50%）になり、その後は段階的に下がります。</p>
+  <table>
+    <thead><tr><th>仕入れの時期</th><th class="num">控除できる割合</th></tr></thead>
+    <tbody>
+      <tr><td>2023年10月〜2026年9月</td><td class="num">80%</td></tr>
+      <tr><td>2026年10月〜2028年9月</td><td class="num">70%</td></tr>
+      <tr><td>2028年10月〜2030年9月</td><td class="num">50%</td></tr>
+      <tr><td>2030年10月〜2031年9月</td><td class="num">30%</td></tr>
+      <tr><td>2031年10月〜</td><td class="num">0%</td></tr>
+    </tbody>
+  </table>
+  <p>あわせて、1つの相手からの経過措置の対象となる仕入れの上限が年間1億円（改正前10億円）に引き下げられています（2026年10月1日以後に開始する課税期間から）。</p>
+
+  <h2>どの方法を選べばいい？</h2>
+  <ul>
+    <li><b>3割特例</b>：届出不要。2027年・2028年分はサービス業・製造業などの多くで最も有利。</li>
+    <li><b>簡易課税</b>：卸売業（みなし仕入率90%）・小売業（80%）なら3割特例より有利。届出が必要で、原則2年間は継続適用。</li>
+    <li><b>本則課税</b>：設備投資や外注費が多く、経費の消費税が大きい年に有利。経費のインボイスの保存と帳簿づけが必要。</li>
+  </ul>
+  <p>詳しくは<a href="../../guide/3wari-tokurei/">3割特例とは？2割特例との違いと手続き</a>で解説しています。</p>
+  <p class="sources">出典：国税庁「<a href="https://www.nta.go.jp/taxes/shiraberu/zeimokubetsu/shohi/keigenzeiritsu/invoice-review/index.htm" target="_blank" rel="noopener">令和８年度税制改正特集</a>」、「インボイス制度に関する令和８年度税制改正について」（令和8年4月、5月改訂）、<a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6505.htm" target="_blank" rel="noopener">No.6505 簡易課税制度</a></p>
+
+  <div data-aff="advisor" data-aff-title="申告方法の判断に迷ったら"></div>
+  <section class="faq"><h2 id="faq">よくある質問</h2><details><summary>3割特例は誰が使えますか？</summary><div class="a"><p>免税事業者がインボイス発行事業者の登録をしたこと（または課税事業者選択届出書の提出）により課税事業者になった個人事業者が、令和9年（2027年）分と令和10年（2028年）分の申告で使えます。2年前の課税売上高が1,000万円を超える年は使えません。法人は対象外です。</p></div></details><details><summary>3割特例を使うのに届出は必要ですか？</summary><div class="a"><p>事前の届出は不要です。確定申告書に3割特例の適用を受ける旨を付記すれば使えます。年ごとに選べます。</p></div></details><details><summary>3割特例と簡易課税はどちらが得ですか？</summary><div class="a"><p>簡易課税のみなし仕入率が70%より高い業種（卸売業90%・小売業80%）は簡易課税、それ以外（製造業等70%・飲食店等60%・サービス業50%・不動産業40%）は多くの場合3割特例のほうが有利です。経費の多い年は本則課税が有利なこともあります。このツールで3つを並べて比べられます。</p></div></details><details><summary>3割特例のあと、簡易課税に切り替えるには？</summary><div class="a"><p>令和8年度の改正で、2割特例や3割特例を使った年の翌年分の確定申告期限までに「簡易課税制度選択届出書」を出せば、その翌年分から簡易課税を使えるようになりました。例えば令和10年分を3割特例で申告した場合、令和11年分の申告期限（令和12年4月1日）までの提出で令和11年分から簡易課税を適用できます。</p></div></details><details><summary>計算結果は正確ですか？</summary><div class="a"><p>課税標準額の千円未満と納付税額の百円未満の切り捨てを反映した概算です。中間申告、売上の返品・値引き、貸倒れ、複数の事業区分などは考慮していません。実際の申告は税務署や税理士にご確認ください。</p></div></details></section>
+</article>
+
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <a class="brand" href="../../"><img src="../../favicon.svg" alt="" width="24" height="24"><span>ひとり請求書</span></a>
+    <div class="ft-cols">
+      <div><h4>書類をつくる（無料）</h4><ul>
+        <li><a href="../../">請求書</a></li>
+        <li><a href="../../estimate/">見積書</a></li>
+        <li><a href="../../delivery/">納品書</a></li>
+        <li><a href="../../receipt/">領収書</a></li>
+      </ul></div>
+      <div><h4>計算ツール</h4><ul>
+        <li><a href="../../tools/shohizei/">消費税 3割特例シミュレーター</a></li>
+        <li><a href="../../tools/gensen/">源泉徴収 計算</a></li>
+        <li><a href="../../tools/inshi/">領収書の収入印紙 判定</a></li>
+      </ul></div>
+      <div><h4>解説</h4><ul>
+        <li><a href="../../guide/invoice/">インボイス対応の請求書の書き方</a></li>
+        <li><a href="../../guide/3wari-tokurei/">3割特例とは（2027〜2028年）</a></li>
+        <li><a href="../../guide/denchoho/">請求書PDFの保存と電子帳簿保存法</a></li>
+        <li><a href="../../guide/documents/">見積書・納品書・請求書・領収書の違い</a></li>
+      </ul></div>
+      <div><h4>このサイトについて</h4><ul>
+        <li><a href="../../pro/">Pro版（買い切り・オフライン）</a></li>
+        <li><a href="../../about/">運営者情報・お問い合わせ</a></li>
+        <li><a href="../../privacy/">プライバシーポリシー</a></li>
+      </ul></div>
+    </div>
+    <p class="ft-note">入力した内容は、お使いのブラウザの中（端末内）にだけ保存され、当サイトのサーバーへ送信されることはありません。計算結果や解説は一般的な情報です。個別の税務判断は税理士・税務署にご確認ください。当サイトはアフィリエイトプログラム等による広告を掲載することがあります（該当箇所に「PR」と表示）。</p>
+    <p class="ft-copy">© 2026 ひとり請求書</p>
+  </div>
+</footer>
+<script>window.HS_CONFIG = {"siteName":"ひとり請求書","proUrl":"","trialUrl":"","proPrice":"1,480円（発売記念 980円）","adsenseClient":"","adsenseSlots":{"content":"","footer":""},"affiliates":{"accounting":[{"name":"freee会計","desc":"請求書の入金管理から確定申告・消費税申告まで。スマホでも操作しやすい。","url":"https://www.freee.co.jp/","affiliate":false,"cta":"公式サイトを見る"},{"name":"マネーフォワード クラウド確定申告","desc":"銀行・カード連携で帳簿づけを自動化。消費税の申告書作成にも対応。","url":"https://biz.moneyforward.com/tax_return/","affiliate":false,"cta":"公式サイトを見る"},{"name":"弥生 やよいの青色申告 オンライン","desc":"老舗会計ソフトのクラウド版。初年度無料のプランあり（公式サイトで要確認）。","url":"https://www.yayoi-kk.co.jp/","affiliate":false,"cta":"公式サイトを見る"}],"advisor":[{"name":"税理士ドットコム","desc":"消費税の申告方法（3割特例・簡易課税・本則）の判断を税理士に相談できます。","url":"https://www.zeiri4.com/","affiliate":false,"cta":"税理士を探す"}]},"contactUrl":""};</script>
+<script src="../../assets/app.js?v=81142e09da" defer></script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="ja" data-base="../../">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>源泉徴収 計算ツール【10.21%・20.42%】報酬から振込額／手取りから請求額を逆算｜ひとり請求書</title>
+<meta name="description" content="フリーランスの報酬にかかる源泉徴収税額を計算。100万円以下は10.21%、超える部分は20.42%。振込してほしい手取り額から請求すべき報酬額を逆算することもできます。">
+<link rel="canonical" href="https://popopo-bug.github.io/hitori-seikyu/tools/gensen/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ひとり請求書">
+<meta property="og:title" content="源泉徴収 計算ツール【10.21%・20.42%】報酬から振込額／手取りから請求額を逆算｜ひとり請求書">
+<meta property="og:description" content="フリーランスの報酬にかかる源泉徴収税額を計算。100万円以下は10.21%、超える部分は20.42%。振込してほしい手取り額から請求すべき報酬額を逆算することもできます。">
+<meta property="og:url" content="https://popopo-bug.github.io/hitori-seikyu/tools/gensen/">
+<meta property="og:image" content="https://popopo-bug.github.io/hitori-seikyu/og/default.png">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#1f4ea3">
+<meta name="format-detection" content="telephone=no">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../../icons/icon-48.png" sizes="48x48" type="image/png">
+<link rel="apple-touch-icon" href="../../icons/apple-touch-icon.png">
+<link rel="manifest" href="../../manifest.webmanifest">
+<link rel="stylesheet" href="../../assets/style.css?v=81142e09da">
+
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"源泉徴収 計算ツール","url":"https://popopo-bug.github.io/hitori-seikyu/tools/gensen/","applicationCategory":"BusinessApplication","operatingSystem":"Web","inLanguage":"ja","offers":{"@type":"Offer","price":"0","priceCurrency":"JPY"},"description":"フリーランスの報酬にかかる源泉徴収税額を計算。100万円以下は10.21%、超える部分は20.42%。振込してほしい手取り額から請求すべき報酬額を逆算することもできます。"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://popopo-bug.github.io/hitori-seikyu/"},{"@type":"ListItem","position":2,"name":"源泉徴収 計算","item":"https://popopo-bug.github.io/hitori-seikyu/tools/gensen/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"源泉徴収の税率は2027年から変わりますか？","acceptedAnswer":{"@type":"Answer","text":"合計の税率は変わりません。2027年1月から、復興特別所得税が2.1%から1.1%に下がり、新たに防衛特別所得税1%が加わりますが、合計は従来と同じ2.1%のため、報酬・料金の源泉徴収税率は引き続き10.21%（100万円超の部分は20.42%）です。"}},{"@type":"Question","name":"消費税込みの金額に源泉徴収しますか？","acceptedAnswer":{"@type":"Answer","text":"原則は税込金額が対象ですが、請求書で報酬と消費税額が明確に分けて書かれている場合は、税抜金額を対象にできます。"}},{"@type":"Question","name":"源泉徴収が必要なのはどんな報酬ですか？","acceptedAnswer":{"@type":"Answer","text":"個人に支払う原稿料・デザイン料・講演料・翻訳料・写真の撮影料・弁護士や税理士の報酬などです。プログラミング（システム開発）の対価は、原則として源泉徴収の対象になりません。支払う相手が法人の場合も原則不要です。"}},{"@type":"Question","name":"源泉徴収するのは誰ですか？","acceptedAnswer":{"@type":"Answer","text":"報酬を支払う側（源泉徴収義務者）です。ただし、給与の支払いがない個人などは源泉徴収義務者になりません。請求する側は、源泉徴収される前提の請求書を求められることがあるので、取引先に確認しましょう。"}}]}]}</script>
+</head>
+<body data-page="tools-gensen">
+<a class="skip" href="#main">本文へスキップ</a>
+<header class="site-header">
+  <div class="wrap wrap-wide hd">
+    <a class="brand" href="../../"><img src="../../favicon.svg" alt="" width="28" height="28"><span>ひとり請求書</span></a>
+    <button type="button" class="btn btn-ghost btn-sm nav-toggle" aria-expanded="false" aria-controls="site-nav">メニュー</button>
+    <nav id="site-nav" class="nav" aria-label="メインメニュー">
+      <a href="../../">請求書</a>
+      <a href="../../estimate/">見積書</a>
+      <a href="../../delivery/">納品書</a>
+      <a href="../../receipt/">領収書</a>
+      <a href="../../tools/shohizei/">3割特例 計算</a>
+      <a href="../../tools/gensen/" aria-current="page">源泉徴収 計算</a>
+      <a href="../../guide/">解説</a>
+      <a class="nav-pro" href="../../pro/">Pro版</a>
+    </nav>
+  </div>
+</header>
+<main id="main">
+<section class="wrap hero-mini">
+  <nav class="crumbs" aria-label="パンくずリスト"><a href="../../">ホーム</a><span>›</span><span aria-current="page">源泉徴収 計算</span></nav>
+  <h1>源泉徴収 計算ツール</h1>
+  <p class="lead">報酬額を入れると源泉徴収税額と実際の振込額を、振込してほしい金額（手取り）を入れると請求すべき報酬額を計算します。</p>
+</section>
+<div class="wrap"><div data-app="gensen"></div></div>
+<div class="wrap"><div class="ad-slot" data-slot="content"></div></div>
+
+<article class="wrap wrap-narrow prose">
+  <h2>源泉徴収税額の計算式</h2>
+  <table>
+    <thead><tr><th>1回の支払金額</th><th>源泉徴収税額</th></tr></thead>
+    <tbody>
+      <tr><td>100万円以下</td><td>支払金額 × 10.21%</td></tr>
+      <tr><td>100万円超</td><td>（支払金額 − 100万円）× 20.42% ＋ 102,100円</td></tr>
+    </tbody>
+  </table>
+  <p>1円未満は切り捨てます。10.21%は所得税10%に、復興特別所得税（2027年からは復興特別所得税と防衛特別所得税）の2.1%分を加えた税率です。</p>
+
+  <h2>早見表（税抜報酬・消費税10%・税抜額に源泉）</h2>
+  <table>
+    <thead><tr><th class="num">報酬（税抜）</th><th class="num">消費税</th><th class="num">源泉徴収税額</th><th class="num">振込額</th></tr></thead>
+    <tbody>
+      <tr><td class="num">10,000円</td><td class="num">1,000円</td><td class="num">1,021円</td><td class="num">9,979円</td></tr>
+      <tr><td class="num">30,000円</td><td class="num">3,000円</td><td class="num">3,063円</td><td class="num">29,937円</td></tr>
+      <tr><td class="num">50,000円</td><td class="num">5,000円</td><td class="num">5,105円</td><td class="num">49,895円</td></tr>
+      <tr><td class="num">100,000円</td><td class="num">10,000円</td><td class="num">10,210円</td><td class="num">99,790円</td></tr>
+      <tr><td class="num">300,000円</td><td class="num">30,000円</td><td class="num">30,630円</td><td class="num">299,370円</td></tr>
+      <tr><td class="num">500,000円</td><td class="num">50,000円</td><td class="num">51,050円</td><td class="num">498,950円</td></tr>
+      <tr><td class="num">1,000,000円</td><td class="num">100,000円</td><td class="num">102,100円</td><td class="num">997,900円</td></tr>
+      <tr><td class="num">1,500,000円</td><td class="num">150,000円</td><td class="num">204,200円</td><td class="num">1,445,800円</td></tr>
+    </tbody>
+  </table>
+  <p>源泉徴収された税金は、確定申告で所得税を精算するときに「源泉徴収税額」として差し引かれます（納めすぎなら還付）。支払調書や入金額の記録を残しておきましょう。</p>
+  <div class="cta-row"><a class="btn btn-primary" href="../../">源泉徴収つきの請求書を作る</a></div>
+  <p class="sources">出典：国税庁 <a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2792.htm" target="_blank" rel="noopener">No.2792 源泉徴収が必要な報酬・料金等とは</a>、<a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2795.htm" target="_blank" rel="noopener">No.2795 原稿料や講演料等を支払ったとき</a>、源泉徴収税額表（令和9年分）</p>
+  <section class="faq"><h2 id="faq">よくある質問</h2><details><summary>源泉徴収の税率は2027年から変わりますか？</summary><div class="a"><p>合計の税率は変わりません。2027年1月から、復興特別所得税が2.1%から1.1%に下がり、新たに防衛特別所得税1%が加わりますが、合計は従来と同じ2.1%のため、報酬・料金の源泉徴収税率は引き続き10.21%（100万円超の部分は20.42%）です。</p></div></details><details><summary>消費税込みの金額に源泉徴収しますか？</summary><div class="a"><p>原則は税込金額が対象ですが、請求書で報酬と消費税額が明確に分けて書かれている場合は、税抜金額を対象にできます。</p></div></details><details><summary>源泉徴収が必要なのはどんな報酬ですか？</summary><div class="a"><p>個人に支払う原稿料・デザイン料・講演料・翻訳料・写真の撮影料・弁護士や税理士の報酬などです。プログラミング（システム開発）の対価は、原則として源泉徴収の対象になりません。支払う相手が法人の場合も原則不要です。</p></div></details><details><summary>源泉徴収するのは誰ですか？</summary><div class="a"><p>報酬を支払う側（源泉徴収義務者）です。ただし、給与の支払いがない個人などは源泉徴収義務者になりません。請求する側は、源泉徴収される前提の請求書を求められることがあるので、取引先に確認しましょう。</p></div></details></section>
+</article>
+
+</main>
+<footer class="site-footer">
+  <div class="wrap">
+    <a class="brand" href="../../"><img src="../../favicon.svg" alt="" width="24" height="24"><span>ひとり請求書</span></a>
+    <div class="ft-cols">
+      <div><h4>書類をつくる（無料）</h4><ul>
+        <li><a href="../../">請求書</a></li>
+        <li><a href="../../estimate/">見積書</a></li>
+        <li><a href="../../delivery/">納品書</a></li>
+        <li><a href="../../receipt/">領収書</a></li>
+      </ul></div>
+      <div><h4>計算ツール</h4><ul>
+        <li><a href="../../tools/shohizei/">消費税 3割特例シミュレーター</a></li>
+        <li><a href="../../tools/gensen/">源泉徴収 計算</a></li>
+        <li><a href="../../tools/inshi/">領収書の収入印紙 判定</a></li>
+      </ul></div>
+      <div><h4>解説</h4><ul>
+        <li><a href="../../guide/invoice/">インボイス対応の請求書の書き方</a></li>
+        <li><a href="../../guide/3wari-tokurei/">3割特例とは（2027〜2028年）</a></li>
+        <li><a href="../../guide/denchoho/">請求書PDFの保存と電子帳簿保存法</a></li>
+        <li><a href="../../guide/documents/">見積書・納品書・請求書・領収書の違い</a></li>
+      </ul></div>
+      <div><h4>このサイトについて</h4><ul>
+        <li><a href="../../pro/">Pro版（買い切り・オフライン）</a></li>
+        <li><a href="../../about/">運営者情報・お問い合わせ</a></li>
+        <li><a href="../../privacy/">プライバシーポリシー</a></li>
+      </ul></div>
+    </div>
+    <p class="ft-note">入力した内容は、お使いのブラウザの中（端末内）にだけ保存され、当サイトのサーバーへ送信されることはありません。計算結果や解説は一般的な情報です。個別の税務判断は税理士・税務署にご確認ください。当サイトはアフィリエイトプログラム等による広告を掲載することがあります（該当箇所に「PR」と表示）。</p>
+    <p class="ft-copy">© 2026 ひとり請求書</p>
+  </div>
+</footer>
+<script>window.HS_CONFIG = {"siteName":"ひとり請求書","proUrl":"","trialUrl":"","proPrice":"1,480円（発売記念 980円）","adsenseClient":"","adsenseSlots":{"content":"","footer":""},"affiliates":{"accounting":[{"name":"freee会計","desc":"請求書の入金管理から確定申告・消費税申告まで。スマホでも操作しやすい。","url":"https://www.freee.co.jp/","affiliate":false,"cta":"公式サイトを見る"},{"name":"マネーフォワード クラウド確定申告","desc":"銀行・カード連携で帳簿づけを自動化。消費税の申告書作成にも対応。","url":"https://biz.moneyforward.com/tax_return/","affiliate":false,"cta":"公式サイトを見る"},{"name":"弥生 やよいの青色申告 オンライン","desc":"老舗会計ソフトのクラウド版。初年度無料のプランあり（公式サイトで要確認）。","url":"https://www.yayoi-kk.co.jp/","affiliate":false,"cta":"公式サイトを見る"}],"advisor":[{"name":"税理士ドットコム","desc":"消費税の申告方法（3割特例・簡易課税・本則）の判断を税理士に相談できます。","url":"https://www.zeiri4.com/","affiliate":false,"cta":"税理士を探す"}]},"contactUrl":""};</script>
+<script src="../../assets/app.js?v=81142e09da" defer></script>
+</body>
+</html>
