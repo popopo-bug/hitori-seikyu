@@ -20,9 +20,9 @@
 <link rel="icon" href="../icons/icon-48.png" sizes="48x48" type="image/png">
 <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
 <link rel="manifest" href="../manifest.webmanifest">
-<link rel="stylesheet" href="../assets/style.css?v=81142e09da">
+<link rel="stylesheet" href="../assets/style.css?v=bb1263b680">
 
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"ひとり請求書（領収書作成ツール）","url":"https://popopo-bug.github.io/hitori-seikyu/receipt/","applicationCategory":"BusinessApplication","operatingSystem":"Web","inLanguage":"ja","offers":{"@type":"Offer","price":"0","priceCurrency":"JPY"},"description":"領収書を無料・登録不要で作成してPDF保存。インボイス対応で、5万円以上なら必要な収入印紙の金額を自動表示。PDFやメールで送る領収書は印紙不要です。"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://popopo-bug.github.io/hitori-seikyu/"},{"@type":"ListItem","position":2,"name":"領収書","item":"https://popopo-bug.github.io/hitori-seikyu/receipt/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"領収書に収入印紙は必要ですか？","acceptedAnswer":{"@type":"Answer","text":"紙の領収書で、受取金額（消費税額を分けて書いた場合は税抜金額）が5万円以上なら必要です。5万円以上100万円以下は200円です。PDFをメール等で送る場合は課税文書の作成に当たらないため、印紙は不要です。"}},{"@type":"Question","name":"宛名は「上様」でも大丈夫ですか？","acceptedAnswer":{"@type":"Answer","text":"インボイスとしての領収書（適格簡易請求書）で宛名を省略できるのは、小売業・飲食店業・タクシー業など不特定多数を相手にする事業に限られます。それ以外は、受け取る事業者の名称を書いてください。"}},{"@type":"Question","name":"但し書きは何と書けばいいですか？","acceptedAnswer":{"@type":"Answer","text":"「お品代として」ではなく、「Webサイト制作費として」「書籍代として」など具体的に書くのが望ましいです。経費の内容が分かりやすくなります。"}},{"@type":"Question","name":"源泉徴収された報酬の領収書は？","acceptedAnswer":{"@type":"Answer","text":"「源泉徴収をする」をオンにすると、税込合計から源泉徴収税額を差し引いた実際の受取額で領収書を作成し、内訳に源泉徴収税額を表示します。"}}]}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebApplication","name":"ひとり請求書（領収書作成ツール）","url":"https://popopo-bug.github.io/hitori-seikyu/receipt/","applicationCategory":"BusinessApplication","operatingSystem":"Web","inLanguage":"ja","offers":{"@type":"Offer","price":"0","priceCurrency":"JPY"},"description":"領収書を無料・登録不要で作成してPDF保存。インボイス対応で、5万円以上なら必要な収入印紙の金額を自動表示。PDFやメールで送る領収書は印紙不要です。"},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://popopo-bug.github.io/hitori-seikyu/"},{"@type":"ListItem","position":2,"name":"領収書","item":"https://popopo-bug.github.io/hitori-seikyu/receipt/"}]},{"@type":"FAQPage","mainEntity":[{"@type":"Question","name":"領収書に収入印紙は必要ですか？","acceptedAnswer":{"@type":"Answer","text":"紙の領収書で、受取金額（消費税額を分けて書いた場合は税抜金額）が5万円以上なら必要です。5万円以上100万円以下は200円です。PDFをメール等で送る場合は課税文書の作成に当たらないため、印紙は不要です。"}},{"@type":"Question","name":"宛名は「上様」でも大丈夫ですか？","acceptedAnswer":{"@type":"Answer","text":"インボイスとしての領収書（適格簡易請求書）で宛名を省略できるのは、小売業・飲食店業・タクシー業など不特定多数を相手にする事業に限られます。それ以外は、受け取る事業者の名称を書いてください。"}},{"@type":"Question","name":"但し書きは何と書けばいいですか？","acceptedAnswer":{"@type":"Answer","text":"「お品代として」ではなく、「Webサイト制作費として」「書籍代として」など具体的に書くのが望ましいです。経費の内容が分かりやすくなります。"}},{"@type":"Question","name":"2027年4月以降の食料品の領収書は何%ですか？","acceptedAnswer":{"@type":"Answer","text":"2027年4月1日〜2029年3月31日に売った飲食料品は1%です（法案成立が前提。外食・酒類は10%）。明細の税率で「1%軽減」を選ぶと、内訳に「1%対象」と消費税額が表示されます。"}},{"@type":"Question","name":"源泉徴収された報酬の領収書は？","acceptedAnswer":{"@type":"Answer","text":"「源泉徴収をする」をオンにすると、税込合計から源泉徴収税額を差し引いた実際の受取額で領収書を作成し、内訳に源泉徴収税額を表示します。"}}]}]}</script>
 </head>
 <body data-page="receipt">
 <a class="skip" href="#main">本文へスキップ</a>
@@ -71,9 +71,13 @@
     <div class="box-h">PDFで送る領収書は印紙不要</div>
     <p>印紙税は「紙の文書を作成したとき」にかかる税金です。PDFをメールやチャットで送るだけなら印紙は要りません。紙で手渡す・郵送する場合だけ「紙で手渡し・郵送する」をオンにすると、印紙を貼る枠が表示されます。</p>
   </div>
+  <div class="box">
+    <div class="box-h">食料品は2027年4月から1%に</div>
+    <p>飲食料品の消費税が2027年4月1日から2年間1%になる予定です（法案成立が前提）。パン・お菓子・農産物などの領収書は、明細の税率を「1%軽減」にしてください。<a href="../guide/shokuhin-1percent/">詳しくはこちら</a></p>
+  </div>
   <h2>インボイスとしての領収書</h2>
   <p>登録番号を入れると、領収書をインボイス（適格請求書）として交付できます。税率ごとの税抜金額と消費税額は内訳に自動で表示されます。</p>
-  <section class="faq"><h2 id="faq">よくある質問</h2><details><summary>領収書に収入印紙は必要ですか？</summary><div class="a"><p>紙の領収書で、受取金額（消費税額を分けて書いた場合は税抜金額）が5万円以上なら必要です。5万円以上100万円以下は200円です。PDFをメール等で送る場合は課税文書の作成に当たらないため、印紙は不要です。</p></div></details><details><summary>宛名は「上様」でも大丈夫ですか？</summary><div class="a"><p>インボイスとしての領収書（適格簡易請求書）で宛名を省略できるのは、小売業・飲食店業・タクシー業など不特定多数を相手にする事業に限られます。それ以外は、受け取る事業者の名称を書いてください。</p></div></details><details><summary>但し書きは何と書けばいいですか？</summary><div class="a"><p>「お品代として」ではなく、「Webサイト制作費として」「書籍代として」など具体的に書くのが望ましいです。経費の内容が分かりやすくなります。</p></div></details><details><summary>源泉徴収された報酬の領収書は？</summary><div class="a"><p>「源泉徴収をする」をオンにすると、税込合計から源泉徴収税額を差し引いた実際の受取額で領収書を作成し、内訳に源泉徴収税額を表示します。</p></div></details></section>
+  <section class="faq"><h2 id="faq">よくある質問</h2><details><summary>領収書に収入印紙は必要ですか？</summary><div class="a"><p>紙の領収書で、受取金額（消費税額を分けて書いた場合は税抜金額）が5万円以上なら必要です。5万円以上100万円以下は200円です。PDFをメール等で送る場合は課税文書の作成に当たらないため、印紙は不要です。</p></div></details><details><summary>宛名は「上様」でも大丈夫ですか？</summary><div class="a"><p>インボイスとしての領収書（適格簡易請求書）で宛名を省略できるのは、小売業・飲食店業・タクシー業など不特定多数を相手にする事業に限られます。それ以外は、受け取る事業者の名称を書いてください。</p></div></details><details><summary>但し書きは何と書けばいいですか？</summary><div class="a"><p>「お品代として」ではなく、「Webサイト制作費として」「書籍代として」など具体的に書くのが望ましいです。経費の内容が分かりやすくなります。</p></div></details><details><summary>2027年4月以降の食料品の領収書は何%ですか？</summary><div class="a"><p>2027年4月1日〜2029年3月31日に売った飲食料品は1%です（法案成立が前提。外食・酒類は10%）。明細の税率で「1%軽減」を選ぶと、内訳に「1%対象」と消費税額が表示されます。</p></div></details><details><summary>源泉徴収された報酬の領収書は？</summary><div class="a"><p>「源泉徴収をする」をオンにすると、税込合計から源泉徴収税額を差し引いた実際の受取額で領収書を作成し、内訳に源泉徴収税額を表示します。</p></div></details></section>
 </article>
 
 </main>
@@ -95,6 +99,7 @@
       <div><h4>解説</h4><ul>
         <li><a href="../guide/invoice/">インボイス対応の請求書の書き方</a></li>
         <li><a href="../guide/3wari-tokurei/">3割特例とは（2027〜2028年）</a></li>
+        <li><a href="../guide/shokuhin-1percent/">食料品の消費税1%（2027年4月〜）</a></li>
         <li><a href="../guide/denchoho/">請求書PDFの保存と電子帳簿保存法</a></li>
         <li><a href="../guide/documents/">見積書・納品書・請求書・領収書の違い</a></li>
       </ul></div>
@@ -109,6 +114,6 @@
   </div>
 </footer>
 <script>window.HS_CONFIG = {"siteName":"ひとり請求書","proUrl":"","trialUrl":"","proPrice":"1,480円（発売記念 980円）","adsenseClient":"","adsenseSlots":{"content":"","footer":""},"affiliates":{"accounting":[{"name":"freee会計","desc":"請求書の入金管理から確定申告・消費税申告まで。スマホでも操作しやすい。","url":"https://www.freee.co.jp/","affiliate":false,"cta":"公式サイトを見る"},{"name":"マネーフォワード クラウド確定申告","desc":"銀行・カード連携で帳簿づけを自動化。消費税の申告書作成にも対応。","url":"https://biz.moneyforward.com/tax_return/","affiliate":false,"cta":"公式サイトを見る"},{"name":"弥生 やよいの青色申告 オンライン","desc":"老舗会計ソフトのクラウド版。初年度無料のプランあり（公式サイトで要確認）。","url":"https://www.yayoi-kk.co.jp/","affiliate":false,"cta":"公式サイトを見る"}],"advisor":[{"name":"税理士ドットコム","desc":"消費税の申告方法（3割特例・簡易課税・本則）の判断を税理士に相談できます。","url":"https://www.zeiri4.com/","affiliate":false,"cta":"税理士を探す"}]},"contactUrl":""};</script>
-<script src="../assets/app.js?v=81142e09da" defer></script>
+<script src="../assets/app.js?v=bb1263b680" defer></script>
 </body>
 </html>

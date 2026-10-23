@@ -1,5 +1,5 @@
-/*! ひとり請求書 v1.0.0 (web) */
-(function(g){g.HS=g.HS||{};g.HS.edition="web";g.HS.version="1.0.0";})(window);
+/*! ひとり請求書 v1.1.0 (web) */
+(function(g){g.HS=g.HS||{};g.HS.edition="web";g.HS.version="1.1.0";})(window);
 /* ---- core.js ---- */
 /* ひとり請求書 — core utilities */
 (function (g) {
@@ -223,7 +223,22 @@
   const HS = (g.HS = g.HS || {});
   const { num } = HS.util;
 
-  const RATES = [10, 8, 0];
+  // 10%（標準）／8%（軽減：新聞の定期購読と、2027年3月31日以前・2029年4月1日以後の飲食料品）
+  // ／1%（軽減：2027年4月1日〜2029年3月31日の飲食料品）／0%（非課税・不課税）
+  const RATES = [10, 8, 1, 0];
+
+  /**
+   * 飲食料品の消費税率の臨時的な引下げ（国税0.78%＋地方0.22%＝1%）
+   * 根拠：国税庁「飲食料品に係る２年間の消費税率引下げに関するＱ＆Ａ」（令和8年9月）
+   * 法律が成立したら enacted を true にする（画面の注記から「法案成立が前提」が消える）
+   */
+  const FOOD1 = { start: '2027-04-01', end: '2029-03-31', enacted: false };
+
+  /** その日に売った飲食料品の税率（経過措置の対象取引などは考慮しない） */
+  function foodRateOn(dateStr) {
+    const d = String(dateStr || '').slice(0, 10);
+    return d >= FOOD1.start && d <= FOOD1.end ? 1 : 8;
+  }
 
   /** 浮動小数の誤差を落としてから端数処理（0 方向を基準に対称） */
   function roundBy(x, mode) {
@@ -238,7 +253,7 @@
 
   function normRate(r) {
     r = Number(r);
-    return r === 10 || r === 8 ? r : 0;
+    return r === 10 || r === 8 || r === 1 ? r : 0;
   }
 
   function isBlankItem(it) {
@@ -342,7 +357,7 @@
     return {
       lines, rates, net, tax, gross, whBase, whTax, payable,
       stampBase, stamp: stampDuty(stampBase),
-      hasReduced: rates[8].used,
+      hasReduced: rates[8].used || rates[1].used,
       itemCount: lines.filter((l) => !l.blank).length
     };
   }
@@ -371,7 +386,7 @@
     return payout(lo, taxRate, whOnGross);
   }
 
-  HS.calc = { RATES, roundBy, normRate, isBlankItem, lineAmount, withholdingTax, stampDuty, totals, payout, payoutReverse };
+  HS.calc = { RATES, FOOD1, foodRateOn, roundBy, normRate, isBlankItem, lineAmount, withholdingTax, stampDuty, totals, payout, payoutReverse };
 })(typeof window !== 'undefined' ? window : globalThis);
 
 /* ---- ctax.js ---- */
@@ -380,6 +395,9 @@
  *  - 2割特例: 令和8年9月30日を含む課税期間まで（個人は令和8年分まで）
  *  - 3割特例: 個人事業者の令和9年分・令和10年分（売上税額×7割を控除＝納付は3割）
  *  - 免税事業者等からの仕入れの経過措置: R8.10〜70% / R10.10〜50% / R12.10〜30% / R13.10〜0%
+ * 国税庁「飲食料品に係る２年間の消費税率引下げに関するＱ＆Ａ」（令和8年9月）
+ *  - 令和9年4月1日〜令和11年3月31日の飲食料品は1%（国0.78%＋地方0.22%）
+ *  - 簡易課税・2割特例・3割特例では、1%対象の売上税額と同額を仕入税額として控除
  */
 (function (g) {
   'use strict';
@@ -415,6 +433,13 @@
     return Math.round((s / 12) * 10000) / 10000;
   }
 
+  /** 暦年のうち飲食料品が1%になる月の割合（売上・仕入れが毎月均等と仮定） */
+  function food1RatioYear(y) {
+    let n = 0;
+    for (let m = 1; m <= 12; m++) if (HS.calc.foodRateOn(y + '-' + String(m).padStart(2, '0') + '-15') === 1) n++;
+    return n / 12;
+  }
+
   /** 個人事業者がその年分で使える小規模事業者向け特例 */
   function specialRule(year) {
     if (year >= 2023 && year <= 2026) return { key: 'tokurei2', label: '2割特例', deduct: 0.8, pay: 0.2 };
@@ -424,7 +449,7 @@
 
   const floorTo = (x, unit) => Math.floor(x / unit) * unit;
 
-  /** 控除税額から納付税額（国税＋地方）を出す */
+  /** 控除税額から納付税額（国税＋地方）を出す。地方消費税は国税の22/78（10%・8%・1%共通） */
   function settle(outputTax, deduct) {
     const diff = outputTax - deduct;
     if (diff >= 0) {
@@ -440,9 +465,11 @@
   /**
    * input: {
    *   year, salesInclusive(bool),
-   *   sales10, sales8,                  // 課税売上（年額）
-   *   purchases10, purchases8,          // 課税仕入れ・経費（税込）
+   *   sales10,                          // 標準税率10%の売上（年額）
+   *   sales8,                           // 軽減税率（飲食料品など）の売上（年額）。1%の期間分は自動で按分
+   *   purchases10, purchases8,          // 課税仕入れ・経費（税込）。purchases8 は軽減税率（飲食料品）分
    *   nonQualified10,                   // うちインボイスのない10%仕入れ（税込）
+   *   ratio1,                           // 任意：軽減税率の売上・仕入れのうち1%分の割合（指定がなければ月数で按分）
    *   business: 1..6,                   // 簡易課税の事業区分
    *   converted(bool),                  // 免税事業者がインボイス登録で課税事業者になった
    *   base10m(bool),                    // 基準期間（2年前）の課税売上高 1,000万円以下
@@ -452,39 +479,51 @@
   function compute(input) {
     const year = Number(input.year) || 2027;
     const incl = !!input.salesInclusive;
+    const hasRatio = input.ratio1 != null && input.ratio1 !== '' && isFinite(Number(input.ratio1));
+    const r1 = hasRatio ? Math.min(1, Math.max(0, Number(input.ratio1))) : food1RatioYear(year);
+
     const s10 = Math.max(0, num(input.sales10));
-    const s8 = Math.max(0, num(input.sales8));
+    const sRed = Math.max(0, num(input.sales8));
+    const sRed8 = sRed * (1 - r1);
+    const sRed1 = sRed * r1;
 
     const base10 = floorTo(incl ? (s10 * 100) / 110 : s10, 1000);
-    const base8 = floorTo(incl ? (s8 * 100) / 108 : s8, 1000);
+    const base8 = floorTo(incl ? (sRed8 * 100) / 108 : sRed8, 1000);
+    const base1 = floorTo(incl ? (sRed1 * 100) / 101 : sRed1, 1000);
     const out10 = Math.floor((base10 * 78) / 1000);
     const out8 = Math.floor((base8 * 624) / 10000);
-    const outputTax = out10 + out8;
-    const netSales = (incl ? Math.floor((s10 * 100) / 110) + Math.floor((s8 * 100) / 108) : s10 + s8);
+    const out1 = Math.floor((base1 * 78) / 10000);
+    const outputTax = out10 + out8 + out1;
+    const netSales = incl
+      ? Math.floor((s10 * 100) / 110) + Math.floor((sRed8 * 100) / 108) + Math.floor((sRed1 * 100) / 101)
+      : s10 + sRed;
 
     const p10 = Math.max(0, num(input.purchases10));
-    const p8 = Math.max(0, num(input.purchases8));
+    const pRed = Math.max(0, num(input.purchases8));
     const nq10 = Math.min(Math.max(0, num(input.nonQualified10)), p10);
     const ratio = nonQualifiedRatioYear(year);
-    const standardDeduct = Math.floor(((p10 - nq10) * 7.8) / 110 + ((nq10 * 7.8) / 110) * ratio + (p8 * 6.24) / 108);
+    const standardDeduct = Math.floor(
+      ((p10 - nq10) * 7.8) / 110 + ((nq10 * 7.8) / 110) * ratio + (pRed * (1 - r1) * 6.24) / 108 + (pRed * r1 * 0.78) / 101
+    );
 
     const biz = SIMPLE[input.business] ? Number(input.business) : 5;
     const sp = specialRule(year);
     const converted = input.converted !== false;
     const base10m = input.base10m !== false;
     const base50m = input.base50m !== false;
+    const foodNote = out1 ? '。飲食料品（1%）分の売上税額は全額控除（特例）' : '';
 
     const methods = [];
     if (sp) {
       const ok = converted && base10m;
       methods.push(Object.assign(
-        { key: sp.key, label: sp.label, eligible: ok, note: ok ? '届出不要。確定申告書に適用する旨を付記' : '対象外（インボイス登録で課税事業者になった方、かつ2年前の課税売上高1,000万円以下が条件）' },
-        settle(outputTax, Math.floor(outputTax * sp.deduct))
+        { key: sp.key, label: sp.label, eligible: ok, note: ok ? '届出不要。確定申告書に適用する旨を付記' + foodNote : '対象外（インボイス登録で課税事業者になった方、かつ2年前の課税売上高1,000万円以下が条件）' },
+        settle(outputTax, out1 + Math.floor((out10 + out8) * sp.deduct))
       ));
     }
     methods.push(Object.assign(
-      { key: 'simple', label: '簡易課税', eligible: base50m, note: base50m ? 'みなし仕入率 ' + SIMPLE[biz].rate * 100 + '%（' + SIMPLE[biz].label + '）。事前の届出が必要' : '対象外（2年前の課税売上高が5,000万円超）' },
-      settle(outputTax, Math.floor(outputTax * SIMPLE[biz].rate))
+      { key: 'simple', label: '簡易課税', eligible: base50m, note: base50m ? 'みなし仕入率 ' + SIMPLE[biz].rate * 100 + '%（' + SIMPLE[biz].label + '）。事前の届出が必要' + foodNote : '対象外（2年前の課税売上高が5,000万円超）' },
+      settle(outputTax, out1 + Math.floor((out10 + out8) * SIMPLE[biz].rate))
     ));
     methods.push(Object.assign(
       { key: 'standard', label: '本則課税（原則）', eligible: true, note: '実際の経費の消費税を控除。インボイスの保存が必要' },
@@ -498,19 +537,21 @@
       m.rate = netSales > 0 ? m.total / netSales : 0;
     });
 
-    return { year, base10, base8, outputTax, netSales, nonQualifiedRatio: ratio, business: biz, methods, best };
+    return { year, base10, base8, base1, out10, out8, out1, outputTax, netSales, ratio1: r1, nonQualifiedRatio: ratio, business: biz, methods, best };
   }
 
-  /** 同じ売上・経費が続くと仮定した年別の最小納税額 */
+  /** 同じ売上・経費が続くと仮定した年別の最小納税額（1%の按分は年ごとに月数で計算） */
   function projection(input, years) {
     years = years || [2026, 2027, 2028, 2029, 2030];
     return years.map((y) => {
-      const r = compute(Object.assign({}, input, { year: y }));
+      const inp = Object.assign({}, input, { year: y });
+      if (y !== Number(input.year)) delete inp.ratio1;
+      const r = compute(inp);
       return { year: y, best: r.best, methods: r.methods };
     });
   }
 
-  HS.ctax = { SIMPLE, nonQualifiedRatioAt, nonQualifiedRatioYear, specialRule, compute, projection };
+  HS.ctax = { SIMPLE, nonQualifiedRatioAt, nonQualifiedRatioYear, food1RatioYear, specialRule, compute, projection };
 })(typeof window !== 'undefined' ? window : globalThis);
 
 /* ---- model.js ---- */
@@ -611,8 +652,14 @@
   /** 書類の種類に応じた日付などの初期値 */
   function applyTypeDefaults(doc, profile) {
     const d = (profile && profile.defaults) || {};
-    if (doc.type === 'invoice' && !doc.dueDate) doc.dueDate = U.dueByRule(doc.issueDate, d.dueRule || 'eom1');
-    if (doc.type === 'estimate' && !doc.validUntil) doc.validUntil = U.addDays(doc.issueDate, 30);
+    if (doc.type === 'invoice' && !doc.dueDate) {
+      doc.dueDate = U.dueByRule(doc.issueDate, d.dueRule || 'eom1');
+      doc._dueAuto = true;
+    }
+    if (doc.type === 'estimate' && !doc.validUntil) {
+      doc.validUntil = U.addDays(doc.issueDate, 30);
+      doc._validAuto = true;
+    }
   }
 
   /** 書類を別の種類に変換（見積→納品→請求→領収） */
@@ -692,7 +739,7 @@
     doc.items = [
       { name: 'Webサイト デザイン（トップ＋下層5ページ）', qty: 1, unit: '式', price: 300000, rate: 10, wh: true },
       { name: 'コーディング・CMS組み込み', qty: 1, unit: '式', price: 180000, rate: 10, wh: true },
-      { name: '撮影用 お弁当（打ち合わせ時）', qty: 4, unit: '個', price: 1000, rate: 8, wh: true },
+      { name: '撮影用 お弁当（打ち合わせ時）', qty: 4, unit: '個', price: 1000, rate: HS.calc.foodRateOn(doc.issueDate), wh: true },
       { name: '保守サポート（' + (now.getMonth() + 1) + '月分）', qty: 1, unit: '月', price: 20000, rate: 10, wh: true }
     ];
     doc.receipt.purpose = 'コーポレートサイト制作費として';
@@ -920,7 +967,8 @@
   const U = HS.util;
   const { esc, escBr, yen } = U;
 
-  const RATE_LABEL = { 10: '10%対象', 8: '8%対象（軽減税率）※', 0: '非課税・不課税' };
+  const RATE_LABEL = { 10: '10%対象', 8: '8%対象（軽減税率）※', 1: '1%対象（軽減税率）※', 0: '非課税・不課税' };
+  const RATE_ORDER = [10, 8, 1, 0];
 
   function fromBlock(p, sealHtml) {
     const lines = [];
@@ -957,13 +1005,13 @@
   }
 
   function itemsTable(doc, tot, minRows) {
-    const mixed = tot.rates[8].used || tot.rates[0].used;
+    const mixed = tot.rates[8].used || tot.rates[1].used || tot.rates[0].used;
     const inclusive = doc.calc.taxMode === 'inclusive';
     const rows = [];
     (doc.items || []).forEach((it, i) => {
       const l = tot.lines[i];
       if (!l || l.blank) return;
-      const rateCell = l.rate === 8 ? '8%※' : l.rate === 0 ? '−' : '10%';
+      const rateCell = l.rate === 0 ? '−' : l.rate === 10 ? '10%' : l.rate + '%※';
       rows.push(
         '<tr>' +
         '<td class="c-name">' + escBr(it.name) + '</td>' +
@@ -988,7 +1036,7 @@
 
   function breakdown(doc, tot) {
     const inclusive = doc.calc.taxMode === 'inclusive';
-    const rs = [10, 8, 0].filter((r) => tot.rates[r].used);
+    const rs = RATE_ORDER.filter((r) => tot.rates[r].used);
     if (!rs.length) rs.push(10);
     const rows = rs
       .map((r) => {
@@ -1008,13 +1056,15 @@
     const r = [];
     if (!inclusive) {
       r.push(['小計（税抜）', yen(tot.net)]);
-      if (tot.rates[10].used || (!tot.rates[8].used && !tot.rates[0].used)) r.push(['消費税（10%）', yen(tot.rates[10].tax)]);
+      if (tot.rates[10].used || (!tot.rates[8].used && !tot.rates[1].used && !tot.rates[0].used)) r.push(['消費税（10%）', yen(tot.rates[10].tax)]);
       if (tot.rates[8].used) r.push(['消費税（8%）', yen(tot.rates[8].tax)]);
+      if (tot.rates[1].used) r.push(['消費税（1%）', yen(tot.rates[1].tax)]);
       r.push(['合計（税込）', yen(tot.gross), tot.whTax ? '' : 'is-total']);
     } else {
       r.push(['合計（税込）', yen(tot.gross), tot.whTax ? '' : 'is-total']);
       if (tot.rates[10].used) r.push(['（内消費税 10%）', yen(tot.rates[10].tax)]);
       if (tot.rates[8].used) r.push(['（内消費税 8%）', yen(tot.rates[8].tax)]);
+      if (tot.rates[1].used) r.push(['（内消費税 1%）', yen(tot.rates[1].tax)]);
     }
     if (tot.whTax) {
       r.push(['源泉徴収税額', '−' + yen(tot.whTax)]);
@@ -1051,7 +1101,7 @@
     const style = '--doc-accent:' + (design.color || '#1f4ea3');
     const wm = opts.watermark ? '<div class="doc-watermark" aria-hidden="true">' + esc(opts.watermark) + '</div>' : '';
     const foot = [];
-    if (tot.hasReduced) foot.push('※は軽減税率（8%）対象品目です。');
+    if (tot.hasReduced) foot.push('※は軽減税率対象品目です。');
 
     if (doc.type === 'receipt') {
       const r = doc.receipt || {};
@@ -1059,7 +1109,7 @@
       const stampBox = r.paper && tot.stamp > 0
         ? '<div class="rc-stamp"><span>収入印紙</span><small>' + yen(tot.stamp) + '円</small></div>'
         : '';
-      const rows = [10, 8, 0]
+      const rows = RATE_ORDER
         .filter((x) => tot.rates[x].used)
         .map((x) => {
           const v = tot.rates[x];
@@ -1273,6 +1323,7 @@
       '<div class="it-list" data-role="items"></div>' +
       '<div class="it-foot"><button type="button" class="btn btn-ghost" data-act="item-add">＋ 行を追加</button>' +
       '<div class="it-total" data-role="mini-total"></div></div>' +
+      '<p class="notice" data-role="rate-note" hidden></p>' +
       '<datalist id="hs-units">' + UNITS.map((u) => '<option value="' + u + '">').join('') + '</datalist>' +
       '<datalist id="hs-itemlist"></datalist>' +
       '</section>' +
@@ -1392,7 +1443,7 @@
           '<input class="in num it-qty" data-k="d.items.' + i + '.qty" inputmode="decimal" placeholder="1" aria-label="数量">' +
           '<input class="in it-unit" data-k="d.items.' + i + '.unit" list="hs-units" placeholder="式" aria-label="単位">' +
           '<input class="in num it-price" data-k="d.items.' + i + '.price" inputmode="decimal" placeholder="単価" aria-label="単価">' +
-          '<select class="in it-rate" data-k="d.items.' + i + '.rate" data-t="int" aria-label="税率"><option value="10">10%</option><option value="8">8%軽減</option><option value="0">対象外</option></select>' +
+          '<select class="in it-rate" data-k="d.items.' + i + '.rate" data-t="int" aria-label="税率"><option value="10">10%</option><option value="8">8%軽減</option><option value="1">1%軽減</option><option value="0">対象外</option></select>' +
           '<output class="it-amt" data-amt="' + i + '">0</output>' +
           '<div class="it-ops">' +
           (wh ? '<label class="it-wh" title="源泉徴収の対象にする"><input type="checkbox" data-k="d.items.' + i + '.wh">源泉</label>' : '') +
@@ -1460,6 +1511,22 @@
     }
     if (k === 'd.issueDate' && this.doc._autoNo && this.o.autoNumber) this.o.autoNumber(this);
     if (k === 'd.number') this.doc._autoNo = false;
+    // 発行日を変えたら、自動で入れた期限（または発行日より前になった期限）を付け直す
+    if (k === 'd.issueDate') {
+      const d = this.doc;
+      if (d.type === 'invoice' && (d._dueAuto || (d.dueDate && d.dueDate < d.issueDate))) {
+        d.dueDate = U.dueByRule(d.issueDate, this.profile.defaults.dueRule || 'eom1');
+        d._dueAuto = true;
+        this.fillAll(this.root.querySelector('[data-k="d.dueDate"]').parentNode);
+      }
+      if (d.type === 'estimate' && (d._validAuto || (d.validUntil && d.validUntil < d.issueDate))) {
+        d.validUntil = U.addDays(d.issueDate, 30);
+        d._validAuto = true;
+        this.fillAll(this.root.querySelector('[data-k="d.validUntil"]').parentNode);
+      }
+    }
+    if (k === 'd.dueDate' && el) this.doc._dueAuto = false;
+    if (k === 'd.validUntil' && el) this.doc._validAuto = false;
     if (k === 'p.regNo') this.regNoMsg();
     if (isProfile) this._saveProfile();
     this.doc.updatedAt = Date.now();
@@ -1496,6 +1563,7 @@
         return this.print();
       case 'due':
         d.dueDate = U.dueByRule(d.issueDate, el.dataset.rule);
+        d._dueAuto = true;
         this.profile.defaults.dueRule = el.dataset.rule;
         this._saveProfile();
         this.fillAll(this.root.querySelector('[data-k="d.dueDate"]').parentNode);
@@ -1611,6 +1679,17 @@
       mini.innerHTML =
         '<span>合計（税込）<b>¥' + U.yen(tot.gross) + '</b></span>' +
         (tot.whTax ? '<span>源泉徴収 <b>−¥' + U.yen(tot.whTax) + '</b></span><span>差引 <b>¥' + U.yen(tot.payable) + '</b></span>' : '');
+    }
+    // 飲食料品の税率（8% ↔ 1%）の案内
+    const rn = this.root.querySelector('[data-role="rate-note"]');
+    if (rn) {
+      const inPeriod = HS.calc.foodRateOn(d.issueDate) === 1;
+      const cond = HS.calc.FOOD1.enacted ? '' : '（法案が成立した場合）';
+      let msg = '';
+      if (tot.rates[8].used && inPeriod) msg = '2027年4月1日〜2029年3月31日に売った<b>飲食料品は1%</b>です' + cond + '。8%のままなのは、新聞の定期購読や、3月31日以前の取引などです。';
+      else if (tot.rates[1].used && !inPeriod) msg = '<b>1%</b>は、2027年4月1日〜2029年3月31日に売った飲食料品の税率です' + cond + '。それ以外の期間の飲食料品は8%です。';
+      rn.innerHTML = msg;
+      rn.hidden = !msg;
     }
     const mode = this.root.querySelector('[data-role="item-mode"]');
     if (mode) mode.textContent = d.calc.taxMode === 'inclusive' ? '単価は税込' : '単価は税抜';
@@ -1759,14 +1838,15 @@
       '<div class="row-set"><span class="row-label">売上の金額</span><div class="seg"><label><input type="radio" name="salesInclusive" value="0"><span>税抜で入力</span></label><label><input type="radio" name="salesInclusive" value="1"><span>税込で入力</span></label></div></div>' +
       '<div class="grid g2">' +
       '<label class="f"><span class="f-label">年間の売上（10%）</span><input class="in num" name="sales10" inputmode="numeric" placeholder="6,000,000"></label>' +
-      '<label class="f" data-role="s8"><span class="f-label">年間の売上（8%軽減）</span><input class="in num" name="sales8" inputmode="numeric" placeholder="0"></label>' +
+      '<label class="f" data-role="s8"><span class="f-label">年間の売上（飲食料品など・軽減税率）</span><input class="in num" name="sales8" inputmode="numeric" placeholder="0"></label>' +
       '</div>' +
-      '<label class="tg"><input type="checkbox" name="reduced"><span class="tg-ui"></span><span class="tg-label">軽減税率（8%）の売上・仕入れがある</span></label>' +
+      '<label class="tg"><input type="checkbox" name="reduced"><span class="tg-ui"></span><span class="tg-label">飲食料品など軽減税率（8%・1%）の売上・仕入れがある</span></label>' +
+      '<p class="hint" data-role="food-hint" hidden></p>' +
       '<h4 class="sub-h">経費（本則課税の計算に使用）</h4>' +
       '<div class="grid g2">' +
       '<label class="f"><span class="f-label">消費税がかかる経費（10%・税込）<small>外注費・家賃(事務所)・通信費など</small></span><input class="in num" name="purchases10" inputmode="numeric" placeholder="0"></label>' +
       '<label class="f"><span class="f-label">うちインボイスがない相手への支払い</span><input class="in num" name="nonQualified10" inputmode="numeric" placeholder="0"></label>' +
-      '<label class="f" data-role="p8"><span class="f-label">消費税がかかる経費（8%・税込）</span><input class="in num" name="purchases8" inputmode="numeric" placeholder="0"></label>' +
+      '<label class="f" data-role="p8"><span class="f-label">経費（飲食料品など軽減税率・税込）<small>食材・仕入商品など</small></span><input class="in num" name="purchases8" inputmode="numeric" placeholder="0"></label>' +
       '</div>' +
       '<p class="hint">給与・社会保険料・保険料・税金・住宅家賃などは消費税がかからないため含めません。</p>' +
       '<h4 class="sub-h">あなたの状況</h4>' +
@@ -1789,6 +1869,7 @@
       });
     }
     function read() {
+      const prevYear = st.year;
       Array.from(form.elements).forEach((el) => {
         if (!el.name) return;
         if (el.type === 'radio') {
@@ -1798,6 +1879,7 @@
       });
       st.year = +st.year;
       st.business = +st.business;
+      if (st.year !== +prevYear) st.ratio1 = null;
     }
 
     function render() {
@@ -1808,6 +1890,18 @@
       root.querySelector('[data-role="bizex"]').textContent = '例：' + HS.ctax.SIMPLE[st.business].ex;
       const r = HS.ctax.compute(input);
       const pj = HS.ctax.projection(input);
+      const fh = root.querySelector('[data-role="food-hint"]');
+      if (fh) {
+        const cond = HS.calc.FOOD1.enacted ? '' : '（法案成立が前提）';
+        fh.hidden = !st.reduced;
+        fh.innerHTML = st.ratio1 != null
+          ? '書類一覧から取り込んだ割合で計算しています：飲食料品の売上の <b>' + Math.round(r.ratio1 * 100) + '%が1%</b>、残りが8%。'
+          : r.ratio1 === 0
+            ? st.year + '年分の飲食料品は<b>8%</b>として計算します。'
+            : r.ratio1 === 1
+              ? st.year + '年分の飲食料品は<b>すべて1%</b>として計算します' + cond + '。'
+              : st.year + '年分は飲食料品の <b>' + Math.round(r.ratio1 * 12) + 'か月分が1%</b>、残りを8%として月数で按分します' + cond + '。';
+      }
       const cards = r.methods
         .map((m) => {
           const cls = 'mcard' + (m.best ? ' is-best' : '') + (m.eligible ? '' : ' is-na');
@@ -1820,6 +1914,7 @@
             '<p class="mcard-n">' + esc(m.note) + '</p>' +
             '<details class="mcard-d"><summary>計算の内訳</summary><dl>' +
             '<div><dt>売上の消費税額（国税）</dt><dd>' + yen(r.outputTax) + '円</dd></div>' +
+            (r.out1 ? '<div><dt>うち飲食料品1%分</dt><dd>' + yen(r.out1) + '円</dd></div>' : '') +
             '<div><dt>控除する税額</dt><dd>' + yen(m.deduct) + '円</dd></div>' +
             '<div><dt>差引税額（国税）</dt><dd>' + yen(m.national) + '円</dd></div>' +
             '<div><dt>地方消費税</dt><dd>' + yen(m.local) + '円</dd></div>' +
@@ -1851,6 +1946,12 @@
         '<li><b>3割特例は届出不要</b>。令和9年・10年分の確定申告書に適用する旨を書くだけで使えます（個人事業者のみ）。</li>' +
         '<li><b>簡易課税</b>を使うには「簡易課税制度選択届出書」が必要。2割特例・3割特例を使った年の<b>翌年分の申告期限まで</b>に出せば、その翌年分から適用できます（令和8年度改正）。原則2年間は継続適用です。</li>' +
         '<li><b>本則課税</b>は経費のインボイス（適格請求書）の保存が必要。インボイスのない仕入れは2026年10月〜2028年9月は70%、その後50%→30%と控除できる割合が下がります。</li>' +
+        (st.reduced && U.num(st.sales8) > 0
+          ? '<li><b>飲食料品を売っている方</b>：2027年4月〜2029年3月は飲食料品が1%に' + (HS.calc.FOOD1.enacted ? '' : '（法案成立が前提）') +
+            '。2割特例・3割特例・簡易課税では、1%分の売上税額と同額を控除するため、その分の納税は実質ゼロです（還付はなし）。' +
+            '経費の消費税が多く還付を受けたい場合は、2027年中に出せる「簡易課税制度選択不適用届出書」（2年縛りなし）などの特例があります。' +
+            '<a href="' + (HS.site ? HS.site.base : './') + 'guide/shokuhin-1percent/">詳しく</a></li>'
+          : '') +
         '</ul><div data-aff="accounting" data-aff-title="消費税の申告に対応した会計ソフト"></div></div>';
       if (HS.site && HS.site.renderAffiliates) HS.site.renderAffiliates(res);
     }
@@ -1930,12 +2031,13 @@
 
   // ---------------- 収入印紙 ----------------
   function mountInshi(root) {
-    const st = Object.assign({ amount: '55000', taxShown: true, business: true }, HS.store.get('inshi', null) || {});
+    const st = Object.assign({ amount: '55000', taxShown: true, business: true, rate: 10 }, HS.store.get('inshi', null) || {});
     root.classList.add('tool');
     root.innerHTML =
       '<div class="tool-grid"><form class="tool-form card" onsubmit="return false">' +
       '<label class="f"><span class="f-label">領収書に書く金額（税込）</span><input class="in num in-xl" name="amount" inputmode="numeric" placeholder="55,000"></label>' +
       '<label class="tg"><input type="checkbox" name="taxShown"><span class="tg-ui"></span><span class="tg-label">消費税額（または税抜金額）を領収書に分けて書く</span></label>' +
+      '<div class="row-set"><span class="row-label">税率</span><div class="seg"><label><input type="radio" name="rate" value="10"><span>10%</span></label><label><input type="radio" name="rate" value="8"><span>8%</span></label><label><input type="radio" name="rate" value="1"><span>1%（食料品 2027/4〜）</span></label></div></div>' +
       '<label class="tg"><input type="checkbox" name="business"><span class="tg-ui"></span><span class="tg-label">事業（営業）としての受け取り</span></label>' +
       '<p class="hint">医師・弁護士・税理士など営業に当たらない業務や、個人が私物を売った場合などは非課税です。</p>' +
       '</form><div class="tool-result" data-role="result" aria-live="polite"></div></div>';
@@ -1944,24 +2046,28 @@
     Array.from(form.elements).forEach((el) => {
       if (!el.name) return;
       if (el.type === 'checkbox') el.checked = !!st[el.name];
+      else if (el.type === 'radio') el.checked = String(st[el.name]) === el.value;
       else el.value = st[el.name];
     });
     function render() {
       Array.from(form.elements).forEach((el) => {
         if (!el.name) return;
-        st[el.name] = el.type === 'checkbox' ? el.checked : el.value;
+        if (el.type === 'radio') {
+          if (el.checked) st[el.name] = +el.value;
+        } else st[el.name] = el.type === 'checkbox' ? el.checked : el.value;
       });
       HS.store.set('inshi', st);
+      const rate = [10, 8, 1].indexOf(+st.rate) >= 0 ? +st.rate : 10;
       const gross = Math.floor(U.num(st.amount));
-      const base = st.taxShown ? Math.floor((gross * 100) / 110) : gross;
+      const base = st.taxShown ? Math.floor((gross * 100) / (100 + rate)) : gross;
       const fee = st.business ? HS.calc.stampDuty(base) : 0;
       res.innerHTML =
         '<div class="card tool-out">' +
         '<div class="big-kv"><span>必要な収入印紙</span><b>' + (fee ? yen(fee) + '<small>円</small>' : '不要') + '</b></div>' +
         '<table class="kv"><tbody><tr><th>判定に使う金額</th><td>' + yen(base) + '円' + (st.taxShown ? '（税抜）' : '（税込）') + '</td></tr></tbody></table>' +
         '<p class="callout"><b>PDFやメールで送る領収書には印紙は不要</b>です（紙を作成・交付していないため）。紙で渡すときだけ貼って消印します。</p>' +
-        (!st.taxShown && gross >= 50000 && Math.floor((gross * 100) / 110) < 50000
-          ? '<p class="callout is-tip">消費税額を分けて書くと判定額が ' + yen(Math.floor((gross * 100) / 110)) + '円 になり、印紙が不要になります。</p>'
+        (!st.taxShown && gross >= 50000 && Math.floor((gross * 100) / (100 + rate)) < 50000
+          ? '<p class="callout is-tip">消費税額を分けて書くと判定額が ' + yen(Math.floor((gross * 100) / (100 + rate))) + '円 になり、印紙が不要になります。</p>'
           : '') +
         '<a class="btn btn-primary" href="' + (HS.site ? HS.site.base : './') + 'receipt/">領収書を作る →</a>' +
         '</div>';
