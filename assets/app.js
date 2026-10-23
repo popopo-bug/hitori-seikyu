@@ -1,5 +1,5 @@
-/*! ひとり請求書 v1.1.0 (web) */
-(function(g){g.HS=g.HS||{};g.HS.edition="web";g.HS.version="1.1.0";})(window);
+/*! ひとり請求書 v1.1.1 (web) */
+(function(g){g.HS=g.HS||{};g.HS.edition="web";g.HS.version="1.1.1";})(window);
 /* ---- core.js ---- */
 /* ひとり請求書 — core utilities */
 (function (g) {
